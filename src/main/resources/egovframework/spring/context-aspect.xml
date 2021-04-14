@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<!-- AntMatcher -->
+	<bean id="antPathMatcher" class="org.springframework.util.AntPathMatcher" />
+
+
+	<bean id="advice" class="egovframework.sample.common.AdvancedSampleAdvice"/>
+		
+	<aop:config>
+		<aop:pointcut id="allPointcut" expression="execution(* egovframework.sample..*Impl.*(..))"/>
+		<aop:aspect ref="advice">
+			<aop:before pointcut-ref="allPointcut" method="advancedBeforeLogic"/>
+			<aop:after pointcut-ref="allPointcut" method="advancedAfterLogic"/>
+			<aop:around pointcut-ref="allPointcut" method="aroundLog"/>
+			<!-- <aop:after-throwing pointcut-ref="allPointcut" method="afterThrowingLogic" throwing="exceptionObj"/> -->
+		</aop:aspect>
+	</aop:config>
+	
+	
+	<aop:config>
+		<aop:pointcut id="exceptionPointcut" expression="execution(* egovframework.sample..impl.*Impl.*(..))" />
+		<aop:aspect ref="exceptionTransfer">
+			<aop:after-throwing pointcut-ref="exceptionPointcut" method="transfer" throwing="exception"/>
+		</aop:aspect>
+	</aop:config>
+	
+	
+	<!-- 표준프레임워크는 사용자가 시스템을 사용하는 도중 발생하는 예외에 대해서 적절한 예외화면을 서비스하도록 한다. -->
+	<bean id="exceptionTransfer" class="egovframework.rte.fdl.cmmn.aspect.ExceptionTransfer">
+		<property name="exceptionHandlerService">
+			<list>
+				<ref bean="defaultExceptionHandleManager"/>
+			</list>
+		</property>
+	 </bean>
+	 
+	
+	<!-- Exception 발생에 대한 기본 Exception 처리를 위해서 표준프레임워크 실행환경의 DefaultExceptionTransfer를 활용하도록 설정 -->
+	<bean id="defaultExceptionHandleManager" class="egovframework.rte.fdl.cmmn.exception.manager.DefaultExceptionHandleManager">
+		<property name="reqExpMatcher">
+			<ref bean="antPathMatcher"/>
+		</property>
+		<property name="patterns">
+			<list>
+				<value>**service.impl.*</value>
+			</list>
+		</property>
+		<property name="handlers">
+			<list>
+				<ref bean="defaultExceptionHandler"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="defaultExceptionHandler" class="egovframework.sample.exception.handler.DefaultExceptionHandler"/>
+	
+</beans>
