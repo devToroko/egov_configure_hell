@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import egovframework.rte.fdl.cmmn.exception.FdlException;
@@ -14,6 +15,7 @@ import egovframework.sample.service.SampleService;
 import egovframework.sample.vo.SampleVO;
 
 @Service("sampleService")
+@Transactional
 public class SampleServiceImpl extends EgovAbstractServiceImpl implements SampleService {
 	
 	@Resource(name="daoMyBatis")
@@ -42,18 +44,19 @@ public class SampleServiceImpl extends EgovAbstractServiceImpl implements Sample
 
 	@Override
 	public void deleteSample(SampleVO vo) {
-//		throw new IllegalArgumentException();
 		System.out.println("SampleService---Sample 삭제");
 		sampleDao.deleteSample(vo);
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public SampleVO selectSample(SampleVO vo) {
 		System.out.println("SampleService---Sample 상세조회");
 		return sampleDao.selectSample(vo);
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public List<SampleVO> selectSampleList(SampleVO vo) {
 		System.out.println("SampleService---Sample 목록 검색");
 		return sampleDao.selectSampleList(vo);

@@ -5,8 +5,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
-	<!-- AntMatcher -->
-	<bean id="antPathMatcher" class="org.springframework.util.AntPathMatcher" />
+	
 
 
 	<bean id="advice" class="egovframework.sample.common.AdvancedSampleAdvice"/>

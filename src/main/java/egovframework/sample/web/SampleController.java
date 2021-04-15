@@ -31,38 +31,44 @@ public class SampleController {
 	}
 	
 	@RequestMapping(value="/insertSample", method=RequestMethod.GET)
-	public String insertSampleView() throws Exception {
+	public String insertSampleView() {
 		System.out.println("등록 화면으로 이동");
 		return "insertSample";
 	}
 	
 	@RequestMapping(value="/insertSample", method=RequestMethod.POST)
-	public String insertSample(SampleVO vo) throws Exception {
+	public String insertSample(SampleVO vo) {
 		System.out.println("샘플 등록 처리");
 		sampleService.insertSample(vo);
 		return "redirect:/selectSampleList";
 	}
 	
 	@RequestMapping("/updateSample")
-	public String updateSample(@ModelAttribute("sample") SampleVO vo) throws Exception {
+	public String updateSample(@ModelAttribute("sample") SampleVO vo) {
 		sampleService.updateSample(vo);
 		return "redirect:/selectSampleList";
 	}
 	
 	@RequestMapping("/deleteSample")
-	public String deleteSample(SampleVO vo) throws Exception {
+	public String deleteSample(SampleVO vo) {
 		sampleService.deleteSample(vo);
 		return "redirect:/selectSampleList";
 	}
 	
 	@RequestMapping("/selectSample")
-	public String selectSample(SampleVO vo, Model model) throws Exception {
+	public String selectSample(SampleVO vo, Model model) {
 		model.addAttribute("sample", sampleService.selectSample(vo));
 		return "selectSample";
 	}
 	
 	@RequestMapping(value="/selectSampleList")
-	public String selectSampleList(SampleVO vo, Model model) throws Exception {
+	public String selectSampleList(SampleVO vo, Model model) {
+		model.addAttribute("sampleList",sampleService.selectSampleList(vo));
+		return "selectSampleList";
+	}
+	
+	@RequestMapping(value="/selectSampleList1")
+	public String selectSamplesdList(SampleVO vo, Model model) {
 		model.addAttribute("sampleList",sampleService.selectSampleList(vo));
 		return "selectSampleList";
 	}

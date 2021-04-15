@@ -4,6 +4,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import javax.annotation.Resource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +17,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
+import egovframework.rte.fdl.property.EgovPropertyService;
+import egovframework.rte.fdl.property.impl.EgovPropertyServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -36,10 +41,18 @@ public class WebTests {
 		
 		mockMvc
 		.perform(get(
-			"/selectSample.do")
+			"/selectSample")
 			.param("id", "SAMPLE-00001"))
 		.andExpect(status().isOk())
 		.andExpect(forwardedUrl("/WEB-INF/sample/selectSample.jsp"));
 	}
 	
+	@Autowired
+	EgovPropertyServiceImpl egovPropertyService;
+	
+	@Test
+	public void egovPropertyServiceTest() {
+		egovPropertyService.getAllKeyValue().forEach(System.out::println);
+		
+	}
 }

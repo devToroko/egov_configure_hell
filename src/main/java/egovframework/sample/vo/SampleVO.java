@@ -2,7 +2,6 @@ package egovframework.sample.vo;
 
 import java.sql.Date;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-public class SampleVO {
+public class SampleVO /*extends DefaultVO */{
 	private String id;
 	private String title;
 	private String regUser;

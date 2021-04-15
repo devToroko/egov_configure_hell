@@ -7,20 +7,57 @@
 	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- AntMatcher -->
+	<bean id="antPathMatcher" class="org.springframework.util.AntPathMatcher" />
 
-		
-    	
 
-<!-- 	<bean id="sampleServiceImpl" class="egovframework.sample.service.impl.SampleServiceImpl">
-		<constructor-arg ref="jdbc"/>
-		<constructor-arg value="Sample.V.1.0"/>
+	<!-- 정말 별 기능 없는 거다. messageSource로부터 읽어온 Properties 에서 특정 키값을 주면 value를 뱉던가, 모든 key,value를 돌려주는 기능이다. -->	
+	<bean id="egovMessageSource" class="egovframework.sample.egov_common.EgovMessageSource">
+		<property name="reloadableResourceBundleMessageSource" ref="messageSource" />
 	</bean>
 	
-	<bean id="jdbc" class="egovframework.sample.service.impl.SampleDaoMyBatis"></bean>
- -->	
+	<!-- 프로퍼티의 정보를 미리 담아두고 @Autowired로 편하게 값을 불러낼 수 있다. 게다가 다국어 관련 지원도 해주니 일석이조다. -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:/egovframework/rte/fdl/idgnr/messages/idgnr</value> <!-- 자동 아이디 생성에서 사용하는 메시지를 담은 파일을 넣어준다. -->
+				<value>classpath:/egovframework/message/message-sample</value> <!-- ReloadableResourceBundleMessageSource를 사용해서 다국어 관련 기능 구현에 도움을 받는다.. -->
+				<value>classpath:/egovframework/rte/fdl/property/messages/properties</value> <!-- EgovPropertyServiceImpl 로 빈을 생성할 때 필요하다. 하아... -->
+			</list>
+		</property>
+		<property name="cacheSeconds">
+			<value>120</value>
+		</property>
+		<!-- <property name="fallbackToSystemLocale" value="false" /> -->
+	</bean>
+
+	
 	<context:component-scan base-package="egovframework">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 	</context:component-scan>
 	
-	<bean id="leaveaTrace" class="egovframework.rte.fdl.cmmn.trace.LeaveaTrace"></bean>
+	
+	<!-- <bean id="leaveaTrace" class="egovframework.rte.fdl.cmmn.trace.LeaveaTrace" /> -->
+	<bean id="leaveaTrace" class="egovframework.rte.fdl.cmmn.trace.LeaveaTrace">
+		<property name="traceHandlerServices">
+			<list>
+				<ref bean="traceHandlerService"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="traceHandlerService" class="egovframework.rte.fdl.cmmn.trace.manager.DefaultTraceHandleManager">
+		<property name="reqExpMatcher" ref="antPathMatcher" />
+		<property name="patterns" value="*" />	
+		<property name="handlers">
+			<list>
+				<ref bean="defaultTraceHandler"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="defaultTraceHandler" class="egovframework.sample.exception.handler.DefaultTraceHandler"/>
+	
+	
 </beans>
